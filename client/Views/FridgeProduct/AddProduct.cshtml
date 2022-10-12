@@ -1,0 +1,27 @@
+@using Newtonsoft.Json
+@using client.Models.FridgeProductModels
+@model AddFridgeProduct
+@{
+    ViewData["Title"] = "Adding product to fridge";
+}
+
+<div class="container">
+    <form method="post">
+        @Html.ValidationSummary()
+        <input type="hidden" asp-for="Products" value="@JsonConvert.SerializeObject(@Model.Products)">
+        <div class="row mt-2">
+            <select name="ProductId">
+                @foreach(var item in Model.Products)
+                {
+                    <option value='@item.Id'>@item.Name</option>
+                }
+            </select>
+        </div>
+        <div class="row mt-2">
+            <input type="text" asp-for="Quantity" placeholder="Quantity" />
+        </div>
+        <div class="row">
+            <button type="submit" class="btn btn-primary mt-2">Add</button>
+        </div>
+    </form>
+</div>

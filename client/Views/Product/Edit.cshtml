@@ -1,0 +1,20 @@
+@using Newtonsoft.Json
+@using client.Models.ProductModels
+@model ProductEditModel
+@{
+    ViewData["Title"] = "Editing product";
+}
+
+<div class="container">
+    @Html.ValidationSummary()
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="Product" value="@JsonConvert.SerializeObject(@Model.Product)" />
+
+        <label asp-for="Name" class="row" ></label>
+        <input type="text" class="row" asp-for="Name" value="@Model.Product.Name" />
+        <label asp-for="DefaultQuantity" class="row mt-2" ></label>
+        <input type="text" class="row" asp-for="DefaultQuantity" value="@Model.Product.DefaultQuantity" />
+        <input type="file" class="row mt-2" asp-for="Picture" accept="image/*" />
+        <button type="submit" class="btn btn-primary row mt-2">Save</button>
+    </form>
+</div>

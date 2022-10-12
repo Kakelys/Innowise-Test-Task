@@ -1,0 +1,54 @@
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="container">
+    <a href="~/products/create">Create New</a>
+
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Default Quantity</th>
+            <th>Image</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a href="~/products/@item.Id/edit">Edit</a>
+                    <a asp-area="" data-toggle="modal" id="@item.Id" data-target="#deleteModal" class="deleteLink row">Delete</a>
+                </td>
+                <td>@item.Name</td>
+                <td>@item.DefaultQuantity</td>
+                <td><img src='@Url.Action("GetImage", "Image", new {id = item.Id})' height="50" width="50"></td>
+            </tr>
+        }
+    </table>
+</div>
+
+ <!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        Are you sure? 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <form action="" method="post" class="deleteForm">
+            <button type="submit" type="button" class="btn btn-primary">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function(){
+    $(".deleteLink").on("click", function(){
+        var id = $(this).attr("id");
+        $(".deleteForm").attr('action',`products/${id}/delete`); 
+    });
+  });
+</script>

@@ -1,0 +1,66 @@
+@{
+    ViewData["Title"] = "Refrigerators";
+}
+
+<div class="container">
+
+    <a asp-action="Create" asp-controller="Fridge" >Create new</a>
+
+    <table class="table table-stripped">
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Owner Name</th>
+            <th>Model Name</th>
+            <th>Model Year</th>
+        </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <div class="row">
+                    <a href="~/fridges/@item.Id/detail">Detail</a>
+                </div>
+                <div class="row">
+                    <a href="~/fridges/@item.Id/edit">Edit</a>
+                </div>
+                <div class="row">
+                  <a asp-area="" data-toggle="modal" id="@item.Id" data-target="#deleteModal" class="deleteLink">Delete</a>
+                </div>  
+            </td>
+            <td>@item.Name</td>
+            <td>@item.OwnerName</td>
+            <td>@item.ModelNavigation.Name</td>
+            <td>@item.ModelNavigation.Year</td>
+        </tr>
+
+       
+    }
+    </table>
+</div>
+
+ <!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        Are you sure? 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <form action="" method="post" class="deleteForm">
+            <button type="submit" type="button" class="btn btn-primary">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function(){
+    $(".deleteLink").on("click", function(){
+        var id = $(this).attr("id");
+        $(".deleteForm").attr('action',`fridges/${id}/delete`); 
+    });
+  });
+</script>

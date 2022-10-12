@@ -2,7 +2,23 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container text-center">
+    <h1 class="display-10">Welcome to Fridge App</h1>
+    <p>Here you can find any refrigerator for you and your family.</p>
+    <div class="row-fluid">
+
+    <button type="button" class="btn btn-primary" onclick="location.href='fridges'" >
+        Let's check out what refrigerators we have
+    </button>
+    </div>
+    <div class="row-fluid mt-2 mb-2">
+        <button type="button" class="btn btn-primary" onclick="location.href='products'" >
+            Or check products
+        </button>
+    </div>
+    <div class="row-fluid">
+        <form action="fridges/updFridgeProducts" method="POST">
+            <button type='submit' class="btn btn-info" mt-2>Update products in fridge</button>
+        </form>
+    </div>
 </div>

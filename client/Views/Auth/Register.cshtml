@@ -1,0 +1,18 @@
+@using client.Models;
+@model AuthModel;
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="container">
+    @Html.ValidationSummary()
+    <form method="POST">
+        <input type="text" name="UserName" placeholder="User name" class="row" />
+        <input type="password" name="Password" placeholder="Password" class="row mt-2" />
+
+        <button type="submit" class="btn btn-primary row mt-2" >Register</button>
+        <a href="~/login" class="row mt-2">
+            Already have account?
+        </a>
+    </form>
+</div>

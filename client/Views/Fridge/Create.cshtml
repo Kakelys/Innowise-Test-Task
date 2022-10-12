@@ -1,0 +1,52 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Newtonsoft.Json
+@using client.Models.FridgeModels
+@model CreateFridge
+@{
+    ViewData["Title"] = "Creating fridge";
+}
+
+<div class="container">
+    <div class="row">
+        @Html.ValidationSummary()
+    </div>
+    <form method="post">
+        <input type="hidden" asp-for="Models" value="@JsonConvert.SerializeObject(@Model.Models)">
+        <input type="hidden" asp-for="ProductGroups" value="@JsonConvert.SerializeObject(@Model.ProductGroups)">
+        <div class="row mt-2">
+            <input type="text" placeholder="Name" asp-for="Name"/>
+        </div>    
+        <div class="row mt-2">
+            <input type="text" placeholder="Owner Name" asp-for="OwnerName" />
+        </div>
+        
+        <div class="row mt-2">
+            <select name="Model">
+                @foreach(var item in Model.Models)
+                {
+                    <option value ='@item.Id'>@item.Name - @item.Year</option>
+                }
+            </select>
+        </div>
+
+        <div class="row mt-2">
+            <select name="Products">                  
+             @for(int i = 0, j = 0; i < Model.ProductGroups.Count; i++)
+                {
+                    <option value="@JsonConvert.SerializeObject(@Model.ProductGroups[@i])" >
+                         
+                        @for(j = 0;j < Model.ProductGroups[i].Count; j++)
+                        {
+                            ViewBag.value = Model.ProductGroups[i][j].Name+" ";
+                               @ViewBag.value;
+                        }
+                   </option>
+                }
+            </select>
+        </div>
+        <div class="row">
+            <button type="submit" class="btn btn-primary mt-2">Create</button>
+        </div>
+    </form>
+
+</div>

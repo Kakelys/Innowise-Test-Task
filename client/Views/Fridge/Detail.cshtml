@@ -1,0 +1,72 @@
+@using Newtonsoft.Json
+@using client.Models.FridgeModels
+@model FridgeDetail
+@{
+    ViewData["Title"] = "Details";
+}
+<div class="container">
+  @Html.ValidationMessageFor(m=>m.Quantity)
+    <div class="container">
+        <label class="row">Name: @Model.FridgeInDetail.Name</label>    
+        <label class="row">Owner name: @Model.FridgeInDetail.OwnerName</label>
+        <label class="row">Model: @Model.FridgeInDetail.ModelNavigation.Name</label>
+        <label class="row">Model year: @Model.FridgeInDetail.ModelNavigation.Year</label>
+    </div>
+
+    <a href="products" >Add product</a>
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Quantity</th>
+        </tr>
+        @foreach (var item in Model.FridgeInDetail.FridgeProducts)
+        {
+            <tr>
+                <td>
+                  <div class="container">
+                    <div class="row">
+                      <a href="products/@item.Id/edit" class="row">Edit</a>
+                      </div>
+                    <div class="row">
+                      <a asp-area="" data-toggle="modal" data-target="#getModal" id="@item.Id"  class="row getLink">Get a few</a>
+                    </div>
+                  </div>
+                </td>
+                <td>@item.ProductNavigation.Name</td>
+                <td>@item.Quantity</td>   
+            </tr>
+        }
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="getModal" tabindex="-1" role="dialog" aria-labelledby="getModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="getModalLabel">Getting a several products from the fridge</h5>
+      </div>
+      <form action="" method="post" class="getForm">
+      <div class="modal-body">
+        <input type="hidden" asp-for="FridgeInDetail" value="@JsonConvert.SerializeObject(@Model.FridgeInDetail)" />
+        <input type="text" asp-for="Quantity" placeholder="Amount" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" type="button" class="btn btn-primary">Get</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function(){
+    $(".getLink").on("click", function(){
+        var id = $(this).attr("id");
+        $(".getForm").attr('action',`/fridges/@Model.FridgeInDetail.Id/products/${id}/take`); 
+    });
+  });
+</script>
+

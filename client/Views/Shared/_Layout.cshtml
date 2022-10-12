@@ -1,32 +1,58 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var layout = new LayoutModel();
+    if(ViewData["layout"]!=null)
+        layout = (LayoutModel)ViewData["layout"];
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - client</title>
+    <meta name="referrer" content="none">
+    <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">client</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
+            <div class="container d-flex">
+                <div class="container-fluid d-flex">
+                    <a class="navbar-brand" href="/">Fridge App</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/fridges">Fridges</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/products">Products</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="container-fluid d-flex " >
+                    <div class="dropdown show ml-auto" style="display: @layout.ProfileVisibility();">
+                        <a class="dropdown-toggle" style="cursor: pointer;" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Welcome @layout.User?.UserName
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" href="~/logout">Logout</a>
+                        </div>
+                    </div>
+                    <div class="ml-auto" style="display: @layout.SignVisibility();">
+                        <button class="btn btn-primary"  onclick="location.href='/login'">Login</button>
+                        <button class="btn btn-info" onclick="location.href='/register'">Register</button>
+                    </div>
                 </div>
             </div>
+        </div>
         </nav>
     </header>
     <div class="container">
@@ -36,11 +62,8 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2022 - client - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

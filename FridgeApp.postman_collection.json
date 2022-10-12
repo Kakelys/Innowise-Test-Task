@@ -1,0 +1,397 @@
+{
+	"info": {
+		"_postman_id": "3b4ab749-6981-44cd-97ae-4db26b4d692d",
+		"name": "FridgeApp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23138057"
+	},
+	"item": [
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/products",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/products/3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"products",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Image",
+			"item": [
+				{
+					"name": "Get by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/images/7",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"images",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Fridge",
+			"item": [
+				{
+					"name": "All Fridges",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/fridges",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"fridges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add fridge",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJ3ZCIsIlJvbGUiOiIiLCJuYmYiOjE2NjUxMzMyMDEsImV4cCI6MTY2NTczODAwMSwiaWF0IjoxNjY1MTMzMjAxfQ.PaTEXC3oTqII27-dMGXfBYghv6lSd3CZ_eTwQg3oYfh_4Id69v88EaGvEnqwBEJN3JozdZCxI8gz9PkrgI3dtg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n    \"Name\": \"Name\",\r\n    \"OwnerName\": \"Name\",\r\n    \"Model\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/fridges",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"fridges"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update fridge",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"NewName\",\r\n    \"OwnerName\": \"NewOwnerName\",\r\n    \"Model\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/fridges/5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"fridges",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete fridge",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/fridges/5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"fridges",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Fridge Product",
+			"item": [
+				{
+					"name": "Products in fridge by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/fridges/5/products",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"fridges",
+								"5",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete products from fridge",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n    \"ProductId\": 5,\r\n    \"Quantity\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/fridges/2/products/5/take",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"fridges",
+								"2",
+								"products",
+								"5",
+								"take"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add fridge product",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ProductId\": \"5\",\r\n    \"Quantity\": 1\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/fridges/2/products",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"fridges",
+								"2",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit fridge product",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJkIiwicm9sZSI6IjAiLCJuYmYiOjE2NjU1OTQ3MDYsImV4cCI6MTY2NjE5OTUwNiwiaWF0IjoxNjY1NTk0NzA2fQ.yNqsFe8QC3bfHYxBhqj16DcNuEoHHQ0WItWHEdXR3sxZhlLB59gWSHVyCN2BXaPJaNlRBZvmX3e8lJ3CCHZlIw",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"ProductId\" : \"5\",\r\n    \"Quantity\" : \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/fridges/2/products/5",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"fridges",
+								"2",
+								"products",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authroize",
+			"item": [
+				{
+					"name": "Register",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserName\": \"name\",\r\n    \"Password\": \"name\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/account/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"account",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"UserName\": \"d\",\r\n    \"Password\": \"d\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url}}/account/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"account",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "https://localhost:5001/api"
+		}
+	]
+}

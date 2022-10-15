@@ -7,8 +7,9 @@
 
 <div class="container">
     <form method="post">
+        @Html.ValidationSummary()
         <input type="hidden" name="ProductId" value="@Model.Product.Id" />
-        <input type="hidden" value="@JsonConvert.SerializeObject(@Model.Product)">
+        <input type="hidden" name="Product" value="@JsonConvert.SerializeObject(@Model.Product)">
         <div class="row">
             <input type="text" disabled value="@Model.Product.ProductNavigation.Name"/>
         </div>

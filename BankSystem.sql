@@ -13,13 +13,12 @@ CREATE TABLE City (
 CREATE TABLE Bank (
 	Id INT PRIMARY KEY IDENTITY(1,1),
 	Name NVARCHAR(100) NOT NULL UNIQUE,
-	City int CONSTRAINT Bank_City_FK REFERENCES City(Id)
 );
 
 CREATE TABLE Branch (
 	Id INT PRIMARY KEY IDENTITY (1,1),
-	Bank INT  CONSTRAINT Branch_Bank_FK REFERENCES Bank(Id),
-	City INT CONSTRAINT Branch_City_FK REFERENCES City(Id),
+	BankId INT  CONSTRAINT Branch_BankId_FK REFERENCES Bank(Id),
+	CityId INT CONSTRAINT Branch_CityId_FK REFERENCES City(Id),
 );
 
 CREATE TABLE AccountStatus (
@@ -29,15 +28,19 @@ CREATE TABLE AccountStatus (
 
 CREATE TABLE Account (
 	Id INT PRIMARY KEY IDENTITY(1,1),
-	Name NVARCHAR(100) NOT NULL,
-	Bank INT CONSTRAINT Account_Bank_FK REFERENCES Bank(Id),
-	Status INT CONSTRAINT Account_Status_FK REFERENCES AccountStatus(Id),
+	BankId INT CONSTRAINT Account_BankId_FK REFERENCES Bank(Id),
+	StatusId INT CONSTRAINT Account_StatusId_FK REFERENCES AccountStatus(Id),
 	Balance MONEY DEFAULT 0
+);
+
+CREATE TABLE Client (
+	AccountId INT CONSTRAINT Client_AccountId_FK REFERENCES Account(Id),
+	Name varchar(100) NOT NULL,
 );
 
 CREATE TABLE AccountCard (
 	Id INT PRIMARY KEY IDENTITY(1,1),
-	Account INT CONSTRAINT Account_Card_FK REFERENCES Account(Id),
+	AccountId INT CONSTRAINT Account_CardId_FK REFERENCES Account(Id),
 	Balance MONEY DEFAULT 0
 );
 
@@ -53,16 +56,16 @@ VALUES
 	('Vitebsk'),
 	('Mogilev');
 
-INSERT INTO Bank(Name,City)
+INSERT INTO Bank(Name)
 VALUES
-	('Prior', 1),
-	('Alfa', 3),
-	('Belarus', 5),
-	('BSB', 2),
-	('BTA', 4),
-	('Belinvest', 1);
+	('Prior'),
+	('Alfa'),
+	('Belarus'),
+	('BSB'),
+	('BTA'),
+	('Belinvest');
 
-INSERT INTO Branch(Bank, City)
+INSERT INTO Branch(BankId, CityId)
 VALUES
 	(1,3),
 	(1,4),
@@ -98,17 +101,27 @@ values
 	('Platinum'),
 	('Student');
 	
-INSERT INTO Account(Status, Name, Bank)
+INSERT INTO Account(StatusId, BankId)
 VALUES
-	(1, 'Alex', 1),
-	(2, 'Vlad', 2),
-	(2, 'Lia', 2),
-	(3, 'Owen', 3),
-	(4, 'Emma', 4),
-	(4, 'Dima', 5),
-	(5, 'Scarlet', 5);
+	(1, 1),
+	(2, 2),
+	(2, 2),
+	(3, 3),
+	(4, 4),
+	(4, 5),
+	(5, 5);
 
-INSERT INTO AccountCard(Account)
+INSERT INTO Client(Name, AccountId)
+VALUES
+	('Vlad', 1),
+	('Alex', 2),
+	('Bob', 3),
+	('Gena', 4),
+	('Gabriel', 5),
+	('Anton', 6),
+	('Lier', 7);
+
+INSERT INTO AccountCard(AccountId)
 VALUES
 	(1),
 	(2),
@@ -148,53 +161,59 @@ GO
 -- Tasks 
 
 -- (1) 
--- Список банков у которых есть филиалы в городе X
+-- пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ X
 
-SELECT b.Name
+SELECT DISTINCT b.Name
+FROM Bank b
+JOIN Branch br
+	ON b.Id = br.BankId
+	AND br.CityId = 3;
+
+-- пїЅпїЅпїЅ
+
+SELECT DISTINCT b.Name
 FROM Bank AS b
-WHERE b.City = 1;
-
--- Или
-
-SELECT b.Name
-FROM Bank AS b
-INNER JOIN City AS c
-	ON b.City = c.Id
-WHERE c.Name = 'Minsk';
+JOIN Branch br
+	ON br.BankId = b.Id
+JOIN City c 
+	ON c.Id = br.CityId
+	AND c.Name = 'Minsk';
 
 -- (2) 
--- Получить список карточек с указанием имени владельца, баланса и названия банка
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 SELECT ac.Id AS [Card ID],
-	a.Name AS [Owner],
+	c.Name AS [Owner],
 	ac.Balance AS [Card Balance],
 	b.Name AS [Bank name]
 FROM AccountCard AS ac
 JOIN Account AS a
-	ON ac.Account = a.Id
+	ON a.Id = ac.AccountId
+JOIN Client AS c
+	ON ac.AccountId = c.AccountId
 JOIN Bank AS b
-	ON a.Bank = b.Id;
+	ON a.BankId = b.Id;
 
 -- (3) 
--- Получить список банковских аккаунтов
--- у которых баланс не совпадает с суммой баланса по карточкам.
--- В отдельной колонке вывести разницу
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+-- пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+-- пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 UPDATE Account SET Balance = 100 WHERE Id = 1;
-UPDATE AccountCard SET Balance = 20 WHERE Account = 1;
+UPDATE AccountCard SET Balance = 20 WHERE AccountId = 1;
 
-SELECT a.Id, a.Name,
+SELECT a.Id AS [Account Id],
 	Sum(a.Balance)-Sum(ac.Balance) AS [Difference]
 FROM Account a
 JOIN AccountCard ac
-	ON a.Id = ac.Account
-GROUP BY a.Id, a.Name, a.Balance, ac.Balance
+	ON a.Id = ac.AccountId
+GROUP BY a.Id, a.Balance, ac.Balance
 HAVING a.Balance != Sum(ac.Balance);
 
 
 -- (4) 
--- Вывести кол-во банковских карточек для каждого соц статуса
--- (2 реализации, GROUP BY и подзапросом)
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+-- (2 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, GROUP BY пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 
 --		(1)
 
@@ -202,9 +221,9 @@ SELECT acs.Name,
 	Count(ac.Id) AS [Number of cards]
 FROM AccountStatus acs
 JOIN Account a 
-	ON a.Status = acs.Id
+	ON a.StatusId = acs.Id
 JOIN AccountCard ac
-	ON ac.Account = a.Id
+	ON ac.AccountId = a.Id
 GROUP BY acs.Name	
 
 --		(2)
@@ -213,18 +232,18 @@ SELECT acs.Name,
 	(SELECT Count(*)
 	FROM Account a
 	JOIN AccountCard ac 
-		ON ac.Account = a.Id
-	WHERE a.Status = acs.Id )
+		ON ac.AccountId = a.Id
+	WHERE a.StatusId = acs.Id )
 FROM AccountStatus acs
 
 -- (5) 
--- Написать stored procedure 
--- которая будет добавлять по 10$ на каждый банковский аккаунт 
--- для определенного соц статуса
--- Входной параметр процедуры - Id социального статуса
--- Обработать исключительные ситуации
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ stored procedure 
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 10$ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+-- пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ - Id пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-CREATE PROCEDURE uspAddTenToGroup
+CREATE OR ALTER PROCEDURE uspAddTenToGroup
 	@statusId int
 AS
 BEGIN
@@ -237,13 +256,13 @@ BEGIN
 		ELSE
 		IF (SELECT Count(*) 
 			FROM Account a
-			WHERE a.Status = @statusId
+			WHERE a.StatusId = @statusId
 			) = 0
 				RAISERROR ('There is no account in this status group', 11, 1);
 		ELSE
 			UPDATE Account 
 			SET Balance += 10
-			WHERE Status = @statusId
+			WHERE StatusId = @statusId
 	END TRY
 	BEGIN CATCH
 		DECLARE 
@@ -255,31 +274,33 @@ BEGIN
 	END CATCH;
 END;
 
-SELECT a.Id, a.Name, a.Balance, A.Status
+SELECT a.Id, a.Balance, a.StatusId
 FROM Account a;
 
 EXEC uspAddTenToGroup 2;
 
-SELECT a.Id, a.Name, a.Balance, A.Status
+SELECT a.Id, a.Balance, A.StatusId
 FROM Account a;
 
 DROP PROCEDURE uspAddTenToGroup;
 
 -- (6)
--- Получить список доступных средств для каждого клиента
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-SELECT a.Id, a.Name,
+SELECT a.Id, c.Name,
 	a.Balance - Sum(ac.Balance) AS [Available balance]
 FROM Account a
 JOIN AccountCard ac
-	ON a.Id = ac.Account
-GROUP BY a.Id, a.Name, a.Balance, ac.Balance;
+	ON a.Id = ac.AccountId
+JOIN Client c
+	ON c.AccountId = a.Id
+GROUP BY a.Id, c.Name, a.Balance, ac.Balance;
 
 -- (7)
--- Написать процедуру 
--- которая будет переводить определённую сумму со счёта на карту этого аккаунта
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-CREATE PROCEDURE uspTransfer
+CREATE OR ALTER PROCEDURE uspTransfer
 	@accountId int,
 	@cardId int,
 	@amount int
@@ -299,29 +320,27 @@ BEGIN
 		IF (SELECT Count(*)
 			FROM AccountCard ac
 			JOIN Account a
-				ON ac.Account = @accountId
+				ON ac.AccountId = @accountId
 				AND ac.Id = @cardId
 			) = 0
 				RAISERROR ('This user doesn`t have card with this ID', 11, 1);
 		IF (SELECT (a.Balance - SUM(ac.Balance) - @amount)
 			FROM Account a
 			JOIN AccountCard ac
-				ON a.Id = ac.Account
+				ON a.Id = ac.AccountId
 			WHERE a.Id = @accountId
 			GROUP BY a.Balance
 			) <= 0
 				RAISERROR ('Not enough money to transfer', 11, 1);
-		BEGIN TRAN
+		BEGIN
 
 			UPDATE AccountCard
 			SET Balance += @amount
 			WHERE Id = @cardId;
 
-		COMMIT TRAN
+		END
 	END TRY
 	BEGIN CATCH
-		IF @@TRANCOUNT > 0
-				ROLLBACK TRAN
 		DECLARE 
 			@Message varchar(MAX) = ERROR_MESSAGE(),
 			@Severity int = ERROR_SEVERITY(),
@@ -335,35 +354,35 @@ UPDATE Account
 SET Balance = 1000
 WHERE Id = 5;
 
-SELECT ac.Id, ac.Account AS [Account ID], ac.Balance AS [Card balance],
+SELECT ac.Id, ac.AccountId AS [Account ID], ac.Balance AS [Card balance],
 	a.Balance AS [Account balance]
 FROM AccountCard ac
 JOIN Account a
-	ON a.Id = ac.Account
+	ON a.Id = ac.AccountId
 WHERE a.Id = 5;
 
 EXEC uspTransfer 5,12,700;
 
-SELECT ac.Id, ac.Account AS [Account ID], ac.Balance AS [Card balance],
+SELECT ac.Id, ac.AccountId AS [Account ID], ac.Balance AS [Card balance],
 	a.Balance AS [Account balance]
 FROM AccountCard ac
 JOIN Account a
-	ON a.Id = ac.Account
+	ON a.Id = ac.AccountId
 WHERE a.Id = 5;
 
-
 -- (8)
--- Написать триггер на таблицы Account/Cards 
--- чтобы нельзя была занести значения в поле баланс если это противоречит условиям
+-- пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Account/Cards 
+-- пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-CREATE TRIGGER AccounTrigger
+CREATE OR ALTER TRIGGER AccounTrigger
 ON Account
 AFTER UPDATE
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @AccountID int, 
-		@OldBalance money;
+	DECLARE @AccountID INT, 
+		@OldBalance MONEY,
+		@IsFailed BIT = 0;
 
 	DECLARE Curs CURSOR LOCAL
 	for	SELECT i.Id, d.Balance AS OldBalance 
@@ -377,11 +396,13 @@ BEGIN
 		IF (SELECT (a.Balance - SUM(ac.Balance))
 			FROM Account a
 			JOIN AccountCard ac
-				ON a.Id = ac.Account
+				ON a.Id = ac.AccountId
 			WHERE a.Id = @AccountID
 			GROUP BY a.Balance
 			) < 0
 				BEGIN
+					SET @IsFailed = 1;
+
 					UPDATE Account
 					SET Balance = @OldBalance
 					WHERE Id = @AccountId;
@@ -391,10 +412,16 @@ BEGIN
 	END;
 	CLOSE Curs;
 	DEALLOCATE CURS;
+
+	IF @IsFailed = 1
+	BEGIN
+		;THROW 51000, 'Failed to update values, all changes will canceled', 1;
+	END
 END;
 
 
-CREATE TRIGGER CardTrigger
+
+CREATE OR ALTER TRIGGER CardTrigger
 ON AccountCard
 AFTER UPDATE
 AS
@@ -403,11 +430,12 @@ BEGIN
 
 	DECLARE @CardID int, 
 		@AccountID int,
-		@OldBalance money;
+		@OldBalance money,
+		@IsFailed bit = 0;
 
 	DECLARE Curs CURSOR LOCAL
 	for
-	SELECT i.Id, i.Account, d.Balance AS OldBalance 
+	SELECT i.Id, i.AccountId, d.Balance AS OldBalance 
 	FROM inserted i
 	JOIN deleted d
 		ON i.Id = d.Id
@@ -418,11 +446,13 @@ BEGIN
 		IF (SELECT (a.Balance - SUM(ac.Balance))
 		FROM Account a
 		JOIN AccountCard ac
-			ON a.Id = ac.Account
+			ON a.Id = ac.AccountId
 		WHERE a.Id = @AccountID
 		GROUP BY a.Balance
 		) < 0
 		BEGIN
+			SET @IsFailed = 1;
+
 			UPDATE AccountCard
 			SET Balance = @OldBalance
 			WHERE Id = @CardID;
@@ -433,6 +463,12 @@ BEGIN
 
 	CLOSE CURS;
 	DEALLOCATE CURS;
+
+	IF @IsFailed = 1
+	BEGIN
+		;THROW 51000, 'Failed to update values, all changes will canceled', 1;
+	END
+
 END;
 
 
@@ -441,7 +477,7 @@ END;
 SELECT * FROM Account;
 
 UPDATE Account 
-SET Balance = 0
+SET Balance = -1
 WHERE Id = 5;
 
 SELECT * FROM Account;

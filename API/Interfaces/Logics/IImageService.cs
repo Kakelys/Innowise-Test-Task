@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Interfaces.Logics
 {
-    [ApiController]
-    public abstract class BaseApiController : ControllerBase
+    public interface IImageService
     {
+        Task<FileStreamResult> GetImageStream(int imgId);
     }
 }

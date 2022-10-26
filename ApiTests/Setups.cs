@@ -58,7 +58,10 @@ namespace ApiTests
 
         public static void GetByIdAsyncSetup(ref Mock<IRepositoryManager> mock, int id)
         {
-            mock.Setup(rep => rep.Fridge.GetByIdAsync(id, It.IsAny<bool>())).Returns(GetFridgeById(id));
+            try
+            {
+                mock.Setup(rep => rep.Fridge.GetByIdAsync(id, It.IsAny<bool>())).Returns(GetFridgeById(id));
+            }catch{}
         }
 
         public static void PostFridgeSetup(ref Mock<IRepositoryManager> mock, CreateFridgeDto fridge)
@@ -68,8 +71,7 @@ namespace ApiTests
         }
 
         public static void DeleteFridgeSetup(ref Mock<IRepositoryManager> mock, Fridge fridge)
-        {
-            
+        {   
             mock.Setup(rep => rep.Fridge.Delete(fridge)).Returns(DeleteFridge(fridge));
         }
 

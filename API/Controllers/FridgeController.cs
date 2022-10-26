@@ -9,6 +9,7 @@ using API.DTOs;
 using API.Entities;
 using API.Errors;
 using API.Interfaces;
+using API.Interfaces.Logics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -21,131 +22,56 @@ namespace API.Controllers
     [Route("api/fridges")]
     public class FridgeController : BaseApiController
     {
-        public FridgeController(IRepositoryManager repository) : base(repository)
+        private readonly IFridgeService _fridgeService;
+
+        public FridgeController(IFridgeService fridgeService)
         {
+            _fridgeService = fridgeService;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Fridge>>> Get()
         {
-            return Ok(await _repository.Fridge.GetAllFridgesAsync(false));
+            return Ok(await _fridgeService.GetFridges(false));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Fridge>> GetById(int? id)
+        public async Task<ActionResult<Fridge>> GetById(int id)
         {
-            var fridge = await _repository.Fridge.GetByIdAsync(id, false);
-
-            if(fridge == null)
-                return NotFound(ApiException.GetErrorMessage(ApiException.Errors.InvalidFridgeId));
-
-            return Ok(fridge);
+            return Ok(await _fridgeService.GetFridgeById(id, false));
         }
 
         [HttpGet("{id}/detail")]
         public async Task<ActionResult<Fridge>> GetFridgeDetail(int id)
         {
-            var fridge = await _repository.Fridge.GetFridgeDetail(id, false);
-
-            if(fridge == null)
-                return NotFound(ApiException.GetErrorMessage(ApiException.Errors.InvalidFridgeId));
-
-            return Ok(fridge);
+            return Ok(await _fridgeService.GetFridgeDetail(id));
         }
 
         [Authorize]
         [HttpPost]
         public ActionResult<Fridge> PostFridge(CreateFridgeDto fridge)
         {
-            var fr = new Fridge()
-            {
-                Name = fridge.Name,
-                OwnerName = fridge.OwnerName,
-                Model = fridge.Model,
-            };
-
-            try
-            {
-                _repository.BeginTransaction();
-
-                _repository.Fridge.Create(fr);
-                _repository.Save();
-
-                if(fridge.Products != null)
-                {
-                    var fridgeProducts = new List<FridgeProduct>(
-                        fridge.Products.Select(x=>new FridgeProduct()
-                        {
-                            Product = x.Id, Fridge = fr.Id, Quantity = x.DefaultQuantity
-                        }
-                        ));
-                    fr.FridgeProducts = fridgeProducts;
-                }
-
-                _repository.Save();
-                _repository.Commit();
-            }
-            catch
-            {
-                _repository.Rollback();
-                return BadRequest("Something went wrong when building a new refrigerator");
-            }
-            
-            return Ok();
+            return Ok(_fridgeService.Add(fridge));
         }
 
         [Authorize]
         [HttpPost("updproducts")]
-        public async Task<ActionResult<bool>> UpdProducts()
+        public async Task<ActionResult> UpdProducts()
         {
-            var list = new List<FridgeProduct>(await _repository.FridgeProduct.FindEmptyAsync());
-            if(list.Count == 0)
-                return true;
-
-            using var client = new HttpClient();
-            var product = new FridgeProductDto();
-            
-            for(var i = 0; i < list.Count; i++)
-            {
-                product.ProductId = (int)list[i].Product;
-                product.Quantity = list[i].Quantity;
-
-                await client.PostAsync($"https://localhost:5001/api/fridges/{list[i].Fridge}/products", 
-                    new StringContent(JsonConvert.SerializeObject(product), Encoding.UTF8, "application/json"));
-            }
-
-            return Ok();
+            return Ok(await _fridgeService.UpdateFridgesProducts());
         }
 
         [Authorize(Policy = "ForAdmins")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> PutFridge(int id, EditFridgeDto fridge)
+        public async Task<ActionResult<Fridge>> PutFridge(int id, EditFridgeDto fridge)
         {
-            var fr = await _repository.Fridge.GetByIdAsync(id, true);
-
-            if(fr == null)
-                 return NotFound(ApiException.GetErrorMessage(ApiException.Errors.InvalidFridgeId));
-
-            fr.Name = fridge.Name;
-            fr.OwnerName = fridge.OwnerName;
-            fr.Model = fridge.Model;
-
-            _repository.Save();
-            return Ok();
+            return Ok(await _fridgeService.Update(id, fridge));
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteFridge(int id)
         {
-            var fridge = await _repository.Fridge.GetByIdAsync(id, true);
-
-            if(fridge == null)
-                return NotFound(ApiException.GetErrorMessage(ApiException.Errors.InvalidFridgeId));
-
-            _repository.Fridge.Delete(fridge);
-                
-            _repository.Save();
-            return Ok();
+            return Ok(await _fridgeService.Delete(id));
         }
     }
 }

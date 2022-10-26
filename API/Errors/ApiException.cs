@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Errors
 {
-    public class ApiException
+    public class ApiException : Exception
     {
-        public int StatucCode { get; set; }
-        public string Message { get; set; }
+        public int StatusCode { get; set; }
+        public new string Message { get; set; }
         public string Details { get; set; }
         
         public enum Errors
@@ -17,9 +17,9 @@ namespace API.Errors
             InvalidFridgeId,
             ProductNotFound
         }
-        public ApiException(int statucCode, string message = null, string details = null)
+        public ApiException(int statusCode, string message = null, string details = null)
         {
-            StatucCode = statucCode;
+            StatusCode = statusCode;
             Message = message;
             Details = details;
         }

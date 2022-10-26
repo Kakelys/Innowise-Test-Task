@@ -38,6 +38,7 @@ namespace API
         {
             services.AddApplicationServices(_config);
             services.AddIdentityServices(_config);
+            services.AddRepositoryServices(_config);
 
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>

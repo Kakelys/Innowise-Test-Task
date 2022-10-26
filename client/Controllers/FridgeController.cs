@@ -37,16 +37,18 @@ namespace client.Controllers
             var models = await client.GetDataAsync<List<FridgeModel>>("models");
             var list = await client.GetDataAsync<List<Product>>("products");
 
-            //create randomized groups of products
-            var groups = new List<List<Product>>();
+            //creating randomized groups of products, that user can select as 'start products'
             var rand = new Random();
+            var amountOfGroups = rand.Next(3,6);
+            var amountItems = rand.Next(1,3);
+            var groups = new List<List<Product>>();
 
             if(list.Count>0)
             {
-                for(var i = 0; i < 5; i++)
+                for(var i = 0; i < amountOfGroups; i++)
                 {
                     var group = new HashSet<Product>();
-                    for(var j =0; j < 3; j++)
+                    for(var j =0; j < amountItems; j++)
                     {
                         group.Add(list[rand.Next(0,list.Count)]);
                     }

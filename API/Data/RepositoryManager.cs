@@ -16,92 +16,44 @@ namespace API.Data
         private IFridgeModelRepository _fridgeModelRepository;
         private IFridgeProductRepository _fridgeProductRepository;
         private IProductRepository _productRepository;
-        private IProductPictureRepository _imageRepository;
+        private IProductPictureRepository _productPictureRepository;
         private IUserRepository _userRepository;
         private IRoleRepository _roleRepository;
         private IDbContextTransaction _transaction;
 
-        public RepositoryManager(RepositoryContext context)
+        public RepositoryManager(RepositoryContext context,
+            IFridgeRepository fridgeRepository,
+            IFridgeModelRepository fridgeModelRepository,
+            IFridgeProductRepository fridgeProductRepository,
+            IProductRepository productRepository,
+            IProductPictureRepository productPictureRepository,
+            IUserRepository userRepository,
+            IRoleRepository roleRepository)
         {
             _context = context;
+
+            _fridgeRepository = fridgeRepository;
+            _fridgeModelRepository = fridgeModelRepository;
+            _fridgeProductRepository = fridgeProductRepository;
+            _productRepository = productRepository;
+            _productPictureRepository = productPictureRepository;
+            _userRepository = userRepository;
+            _roleRepository = roleRepository;
         }
 
-        public IFridgeRepository Fridge
-        {
-            get
-            {
-                if(_fridgeRepository == null)
-                    _fridgeRepository = new FridgeRepository(_context);
-                
-                return _fridgeRepository;
-            }
-        }
+        public IFridgeRepository Fridge => _fridgeRepository;
 
-        public IFridgeProductRepository FridgeProduct
-        {
-             get
-            {
-                if(_fridgeProductRepository == null)
-                    _fridgeProductRepository = new FridgeProductRepository(_context);
-                
-                return _fridgeProductRepository;
-            }
-        }
+        public IFridgeProductRepository FridgeProduct => _fridgeProductRepository;
 
-        public IFridgeModelRepository FridgeModel
-        {
-            get
-            {
-                if(_fridgeModelRepository == null)
-                    _fridgeModelRepository = new FridgeModelRepository(_context);
-                
-                return _fridgeModelRepository;
-            }
-        }
+        public IFridgeModelRepository FridgeModel => _fridgeModelRepository;
 
-        public IProductRepository Product
-        {
-            get
-            {
-                if(_productRepository == null)
-                    _productRepository = new ProductRepository(_context);
-                
-                return _productRepository;
-            }
-        }
+        public IProductRepository Product => _productRepository;
 
-        public IProductPictureRepository Image
-        {
-            get
-            {
-                if(_imageRepository == null)
-                    _imageRepository = new ProductPictureRepository(_context);
+        public IProductPictureRepository Image => _productPictureRepository;
 
-                return _imageRepository;
-            }
-        }
+        public IUserRepository User => _userRepository;
 
-        public IUserRepository User
-        {
-            get
-            {
-                if(_userRepository == null)
-                    _userRepository = new UserRepository(_context);
-
-                return _userRepository;
-            }
-        }
-
-        public IRoleRepository Role
-        {
-            get
-            {
-                if(_roleRepository == null)
-                    _roleRepository = new RoleRepository(_context);
-
-                return _roleRepository;
-            }
-        }
+        public IRoleRepository Role => _roleRepository;
 
         public void BeginTransaction() => 
             _transaction = _context.Database.BeginTransaction();

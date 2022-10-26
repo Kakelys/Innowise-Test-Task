@@ -294,7 +294,7 @@ JOIN AccountCard ac
 	ON a.Id = ac.AccountId
 JOIN Client c
 	ON c.AccountId = a.Id
-GROUP BY a.Id, c.Name, a.Balance, ac.Balance;
+GROUP BY a.Id, c.Name, a.Balance;
 
 -- (7)
 -- �������� ��������� 

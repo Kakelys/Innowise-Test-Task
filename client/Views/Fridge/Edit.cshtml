@@ -1,0 +1,38 @@
+@using client.Models.FridgeModels
+@model EditFridge
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "Editing fridge";
+}
+
+<div class="container">
+    <form method="POST">
+        @Html.ValidationSummary()
+
+        <input type="hidden" asp-for="Models" value="@JsonConvert.SerializeObject(@Model.Models)"/>
+        <input type="hidden" asp-for="Fridge" value="@JsonConvert.SerializeObject(@Model.Fridge)"/>
+        <label asp-for="Name" class="row"></label>
+        
+        <div class="row">
+            <input type="text" placeholder="Name" asp-for="Name" value="@Model.Fridge.Name"/>
+        </div>
+        <label class="row">Owner Name</label>
+        <div class="row">
+            <input type="text" placeholder="Owner Name" asp-for="OwnerName" value="@Model.Fridge.OwnerName" />
+        </div>
+         <div class="row mt-2">
+            <select name="Model">
+                @foreach(var item in Model.Models)
+                {
+                    ViewBag.Selected = item.Id == Model.Fridge.Model ? true : false;   
+
+                    <option value ='@item.Id' selected="@ViewBag.Selected">@item.Name - @item.Year</option>
+                }
+            </select>
+        </div>
+
+        <div class="row">
+            <button type="submit" class="btn btn-primary mt-2" >Save</button>
+        </div>
+    </form>
+</div>

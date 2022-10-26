@@ -1,0 +1,19 @@
+@using client.Models.ProductModels
+@model ProductModel
+@{
+    ViewData["Title"] = "Creating new product";
+}
+
+<div class="container">
+    @Html.ValidationSummary()
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="text" class="row" asp-for="@Model.Name" placeholder="Name"/>
+        <input type="text" class="row mt-2" asp-for="@Model.DefaultQuantity" placeholder="Default quantity"/>
+        <input type="file" class="row mt-2" asp-for="Picture" accept="image/*" />
+        <div class="row mt-2">
+            <button type="submit" class="btn btn-primary">Create</button>
+        </div>
+    </form>
+</div>
+

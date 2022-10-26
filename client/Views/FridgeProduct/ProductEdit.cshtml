@@ -1,0 +1,25 @@
+@using Newtonsoft.Json
+@using client.Models.FridgeProductModels
+@model EditFridgeProduct
+@{
+    ViewData["Title"] = "Editing product";
+}
+
+<div class="container">
+    <form method="post">
+        @Html.ValidationSummary()
+        <input type="hidden" name="ProductId" value="@Model.Product.Id" />
+        <input type="hidden" name="Product" value="@JsonConvert.SerializeObject(@Model.Product)">
+        <div class="row">
+            <input type="text" disabled value="@Model.Product.ProductNavigation.Name"/>
+        </div>
+        <label class="row">Quantity: </label>
+        <div class="row">
+            <input type="text" name="Quantity" value="@Model.Quantity" >
+        </div>
+
+        <div class="row mt-2">
+            <button class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>
